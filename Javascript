@@ -1,0 +1,47 @@
+// script.js
+const map = L.map('map').setView([32.5, -111], 6); // Centered over AZ/N. Sonora
+
+// Dark satellite basemap using ESRI tiles
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri & NASA | Meteorite data from NASA, AMS, Meteoritical Bulletin',
+  maxZoom: 18
+}).addTo(map);
+
+// Load NASA fireball data from CSV
+Papa.parse('https://cneos.jpl.nasa.gov/fireballs/fireballs.csv', {
+  download: true,
+  header: true,
+  complete: function(results) {
+    results.data.forEach(entry => {
+      const lat = parseFloat(entry['Latitude (deg.)']);
+      const lon = parseFloat(entry['Longitude (deg.)']);
+      if (!isNaN(lat) && !isNaN(lon)) {
+        L.circleMarker([lat, lon], {
+          radius: 5,
+          color: 'red',
+          fillOpacity: 0.8
+        }).addTo(map).bindPopup(`
+          <b>Date:</b> ${entry['Peak Brightness Date/Time (UT)']}<br/>
+          <b>Energy:</b> ${entry['Calculated Total Impact Energy (kt)']} kt
+        `);
+      }
+    });
+  }
+});
+
+// Load known meteorites (static JSON file)
+fetch('data/meteorites.json')
+  .then(res => res.json())
+  .then(data => {
+    data.forEach(m => {
+      L.circleMarker([m.lat, m.lon], {
+        radius: 4,
+        color: 'deepskyblue',
+        fillOpacity: 0.7
+      }).addTo(map).bindPopup(`
+        <b>Name:</b> ${m.name}<br/>
+        <b>Year:</b> ${m.year}<br/>
+        <b>Type:</b> ${m.type}
+      `);
+    });
+  });
