@@ -1,0 +1,6 @@
+meteorite-fireball-tracker/
+├── index.html
+├── style.css
+├── script.js
+└── data/
+    └── meteorites.json
