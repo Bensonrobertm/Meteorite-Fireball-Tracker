@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Sutter's Mill",
+    "year": 2012,
+    "lat": 38.803,
+    "lon": -120.906,
+    "type": "Carbonaceous chondrite"
+  },
+  {
+    "name": "Holbrook",
+    "year": 1912,
+    "lat": 34.9,
+    "lon": -110.158,
+    "type": "Ordinary chondrite"
+  },
+  {
+    "name": "Maribo",
+    "year": 2009,
+    "lat": 32.29,
+    "lon": -110.79,
+    "type": "CM2 Carbonaceous"
+  }
+]
