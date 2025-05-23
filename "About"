@@ -1,0 +1,13 @@
+<footer>
+    <section id="about">
+      <h2>About This Project</h2>
+      <p>
+        This site tracks meteorite fireballs, AMS reports, and known meteorite finds,
+        focusing on Arizona, Northern Sonora, and the Western USA.
+        <br />
+        Data sources: <a href="https://cneos.jpl.nasa.gov/fireballs/" target="_blank">NASA CNEOS</a>,
+        <a href="https://www.amsmeteors.org/" target="_blank">AMS</a>,
+        and the <a href="https://www.lpi.usra.edu/meteor/" target="_blank">Meteoritical Bulletin Database</a>.
+      </p>
+    </section>
+  </footer>
