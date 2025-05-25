@@ -1,7 +1,7 @@
 Here’s your newly cy has
 
 ## Project Overview
-Meteorite-Fireball-Tracker is a web application designed to map and track real-time fireball (bright meteor) reports. The goal is to highlight which events have resulted in meteorite recoveries and guide users to search areas for both recent and historical meteorite falls. The project also displays locations of known meteorite falls and finds, as well as strewn field maps to help researchers and enthusiasts.
+Meteorite-Fireball-Tracker Mapping App is a web application designed to map and track real-time fireball (bright meteor) reports. The goal is to highlight which events have resulted in meteorite recoveries and guide users to search areas for both recent and historical meteorite falls. The project also displays locations of known meteorite falls and finds, as well as AMS Fireball event numbers and links.
 
 ## Features
 - Real-time mapping of new fireball events  
