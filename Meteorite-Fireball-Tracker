@@ -1,3 +1,93 @@
+// Haversine formula for distance in kilometers between two lat/lon points
+function haversine(lat1, lon1, lat2, lon2) {
+  function toRad(x) { return x * Math.PI / 180; }
+  const R = 6371; // km
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// Helper to parse and compare dates (returns days difference)
+function daysBetween(d1, d2) {
+  const date1 = new Date(d1), date2 = new Date(d2);
+  return Math.abs((date1 - date2)/(1000*60*60*24));
+}
+
+// Load meteorites
+let meteorites = [];
+fetch('Data/meteorites.geojson')
+  .then(res => res.json())
+  .then(data => {
+    meteorites = data.features;
+    tryLinkData();
+  });
+
+// Load fireballs
+let fireballs = [];
+Papa.parse('https://cneos.jpl.nasa.gov/fireballs/fireballs.csv', {
+  download: true,
+  header: true,
+  complete: function(results) {
+    fireballs = results.data.filter(fb => fb['Latitude (deg.)'] && fb['Longitude (deg.)']);
+    tryLinkData();
+  }
+});
+
+// When both datasets are loaded:
+function tryLinkData() {
+  if (!meteorites.length || !fireballs.length) return;
+
+  const linkedPairs = [];
+
+  meteorites.forEach(met => {
+    const mDate = met.properties.year ? `${met.properties.year}` : null;
+    const mLat = met.geometry.coordinates[1];
+    const mLon = met.geometry.coordinates[0];
+
+    // Find fireballs within 1 day and 100km
+    const links = fireballs.filter(fb => {
+      const fDate = fb['Peak Brightness Date/Time (UT)']?.split(' ')[0];
+      const fLat = parseFloat(fb['Latitude (deg.)']);
+      const fLon = parseFloat(fb['Longitude (deg.)']);
+      return (
+        mDate && fDate &&
+        daysBetween(mDate, fDate) <= 1 &&
+        haversine(mLat, mLon, fLat, fLon) <= 100
+      );
+    });
+
+    if (links.length > 0) {
+      linkedPairs.push({ meteorite: met, fireballs: links });
+    }
+  });
+
+  // Display on map: meteorites with links get a special marker/popup
+  linkedPairs.forEach(pair => {
+    const met = pair.meteorite;
+    const mLatLng = [met.geometry.coordinates[1], met.geometry.coordinates[0]];
+    const fireballList = pair.fireballs.map(fb =>
+      `${fb['Peak Brightness Date/Time (UT)']} (${fb['Latitude (deg.)']}, ${fb['Longitude (deg.)']})`
+    ).join('<br/>');
+
+    L.circleMarker(mLatLng, {
+      radius: 8,
+      color: 'gold',
+      fillOpacity: 0.9
+    }).addTo(map).bindPopup(
+      `<b>Meteorite:</b> ${met.properties.name}<br/>
+       <b>Year:</b> ${met.properties.year}<br/>
+       <b>Type:</b> ${met.properties.type}<br/>
+       <b>Linked Fireballs:</b><br/>${fireballList}`
+    );
+  });
+
+  // Optionally, also display fireballs as usual or highlight the linked ones
+}
+
 meteorite-fireball-tracker/
 ├── index.html
 ├── style.css
