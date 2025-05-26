@@ -1,23 +1,27 @@
-[
-  {
-    "name": "Sutter's Mill",
-    "year": 2012,
-    "lat": 38.803,
-    "lon": -120.906,
-    "type": "Carbonaceous chondrite"
-  },
-  {
-    "name": "Holbrook",
-    "year": 1912,
-    "lat": 34.9,
-    "lon": -110.158,
-    "type": "Ordinary chondrite"
-  },
-  {
-    "name": "Maribo",
-    "year": 2009,
-    "lat": 32.29,
-    "lon": -110.79,
-    "type": "CM2 Carbonaceous"
-  }
-]
+
+// Load and display meteorites from GeoJSON with extra fields
+fetch('Data/meteorites.geojson')
+  .then(res => res.json())
+  .then(data => {
+    L.geoJSON(data, {
+      pointToLayer: function(feature, latlng) {
+        return L.circleMarker(latlng, {
+          radius: 4,
+          color: 'deepskyblue',
+          fillOpacity: 0.7
+        });
+      },
+      onEachFeature: function(feature, layer) {
+        const props = feature.properties;
+        layer.bindPopup(
+          `<b>Name:</b> ${props.name}<br/>
+           <b>Year:</b> ${props.year}<br/>
+           <b>Type:</b> ${props.type}<br/>
+           <b>Mass (g):</b> ${props.mass_g ?? 'N/A'}<br/>
+           <b>Fall Type:</b> ${props.fall_type ?? 'N/A'}<br/>
+           <b>Country:</b> ${props.country ?? 'N/A'}<br/>
+           <b>Recovery Status:</b> ${props.recovery_status ?? 'N/A'}`
+        );
+      }
+    }).addTo(map);
+  });
